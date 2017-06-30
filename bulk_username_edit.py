@@ -19,7 +19,7 @@ def load_config_to_dict(path):
 
 def connect_umapi(config, test_mode):
     server_config = config["server"]
-    auth_config = config['enterprise']
+    auth_config = config["enterprise"]
 
     if server_config and all(k in server_config for k in ("host", "endpoint", "ims_host")):
         conn = umapi_client.Connection(org_id=auth_config["org_id"],
@@ -33,7 +33,7 @@ def connect_umapi(config, test_mode):
     return conn
 
 
-def updateUserName(conn, email, newusername):
+def update_username(conn, email, newusername):
     query = umapi_client.UserQuery(conn, email)
     result = query.result()
     if result and not result["username"] == newusername:
@@ -65,7 +65,7 @@ def main(args):
                 reader = csv.reader(f)
                 next(reader)
                 for row in reader:
-                    updateUserName(conn, row[0], row[1])
+                    update_username(conn, row[0], row[1])
             except csv.Error as e:
                 sys.exit('file %s, line %d: %s' % (csv_filename, reader.line_num, e))
 
