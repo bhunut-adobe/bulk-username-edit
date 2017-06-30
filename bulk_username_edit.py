@@ -21,7 +21,7 @@ def connect_umapi(config, test_mode):
     server_config = config["server"]
     auth_config = config['enterprise']
 
-    if all(k in server_config for k in ("host", "endpoint", "ims_host")):
+    if server_config and all(k in server_config for k in ("host", "endpoint", "ims_host")):
         conn = umapi_client.Connection(org_id=auth_config["org_id"],
                                        auth_dict=auth_config, ims_host=server_config["ims_host"],
                                        user_management_endpoint="https://" + server_config["host"] + server_config[
