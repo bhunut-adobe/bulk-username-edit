@@ -29,13 +29,13 @@ Must install required dependencies (pyYaml, umapi-client) before continue.
 
 2. Run the following command to load umapi config from User Sync Tool and Bulk Edit CSV file
 ```
-python bulk_username_edit.py --umapi-config c:\user-sync\connect-umapi.yml --csv-input newusername.csv
+python bulk_username_edit.py --umapi-config connector-umapi.yml --csv-input newusername.csv
 ```
 
 ## Example output
 
 ```
-Connected to 5190B7C05746859A7F000101@AdobeOrg,TEST-MODE: False
-changeusernametest1@example.com,success, changed username fakeusername1 -> changeusernametest1
-changeusernametest2@example.com,skipped,Username is the same in the console
+2018-07-11 22:02:46 1620 INFO main - Connected to 42352F285A9066790A494008@AdobeOrg , TEST-MODE: False
+2018-07-11 22:02:47 1620 INFO main - Bunny.Bravo@aemcceawesome.com ,success, changed username: Bunny.Bravo1 -> Bunny.Bravo
+2018-07-11 22:02:47 1620 WARNING main - jdoe@aemcceawesome.com ,skipped,Username is the same in the console
 ```

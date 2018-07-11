@@ -4,7 +4,22 @@ import sys
 import csv
 import umapi_client
 import argparse
+import logging
 
+LOG_STRING_FORMAT = '%(asctime)s %(process)d %(levelname)s %(name)s - %(message)s'
+LOG_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+logger = logging.getLogger('main')
+
+def init_console_log():
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter(LOG_STRING_FORMAT, LOG_DATE_FORMAT))
+    root_logger = logging.getLogger()
+    root_logger.addHandler(handler)
+    root_logger.setLevel(logging.DEBUG)
+    return handler
+
+
+console_log_handler = init_console_log()
 
 def load_config_to_dict(path):
     if os.path.isfile(path):
@@ -29,7 +44,7 @@ def connect_umapi(config, test_mode):
     else:
         conn = umapi_client.Connection(org_id=auth_config["org_id"],
                                        auth_dict=auth_config, test_mode=test_mode)
-    print "Connected to " + auth_config["org_id"] + ",TEST-MODE: " + str(test_mode)
+    logger.log(logging.INFO, "Connected to %s , TEST-MODE: %s" % (auth_config["org_id"], str(test_mode)))
     return conn
 
 
@@ -46,21 +61,22 @@ def update_username(conn, email, newusername):
         _, sent, succeeded = conn.execute_single(user, immediate=True)
 
         if sent > succeeded:
-            print email + ',error, ' + user.errors[0]['message']
+            logger.log(logging.CRITICAL,"%s ,error %s" % (email, user.errors[0]['message']))
         else:
-            print email + ',success, changed username ' + result["username"] + ' -> ' + newusername
+            logger.log(logging.INFO, "%s ,success, changed username: %s -> %s" % (email,result["username"],newusername))
     else:
-        print email + ',skipped,Username is the same in the console'
+        logger.log(logging.WARNING, "%s ,skipped,Username is the same in the console" % email)
 
 
 def main(args):
+    console_log_handler.setLevel(logging.INFO)
     umapi_config = args.umapi_config
     csv_filename = args.csv_filename
     test_mode = args.test_mode
 
     if umapi_config and csv_filename:
         conn = connect_umapi(load_config_to_dict(umapi_config), test_mode)
-        with open(csv_filename, 'rb') as f:
+        with open(csv_filename, 'r') as f:
             try:
                 reader = csv.reader(f)
                 next(reader)
